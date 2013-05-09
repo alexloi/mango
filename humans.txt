@@ -1,0 +1,11 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+Alex Loizou -- Developer -- @alexloiz
+Alex Michael -- Developer -- @alexismic
+
+# TECHNOLOGY COLOPHON
+
+node.js, mongodb, jade, angularjs
