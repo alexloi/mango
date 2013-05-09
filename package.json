@@ -40,5 +40,10 @@
     "supertest": "~0.5.1",
     "superagent": "https://registry.npmjs.org/superagent/-/superagent-0.12.4.tgz",
     "lodash": "~1.2.1"
+  },
+  "devDependencies": {
+    "grunt-bower-concat": "~0.1.0",
+    "grunt-contrib-cssmin": "~0.6.0",
+    "grunt-contrib-watch": "~0.4.0"
   }
 }
