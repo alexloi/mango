@@ -1,0 +1,5 @@
+#config
+!./setup/config.js
+!/setup/config.js
+!setup/config.js
+

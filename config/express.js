@@ -37,8 +37,11 @@ module.exports = function(app, config) {
 
         // Connect errorMiddleware for error handling
         app.use(errorMiddleware.errorDomain(config));
+        // Setup CDN
+        var CDN = require('express-cdn')(app, config.cdn);
+
         // Setup locals for views
-        app.use(viewMiddleware.locals(config));
+        app.use(viewMiddleware.locals(config, CDN));
 
         // Setup passport for auth
         app.use(passport.initialize());
