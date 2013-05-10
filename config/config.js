@@ -3,25 +3,18 @@
 =====================================*/
 
 /*
-- Environment variables:
-    
-    # PORT (specifies port to run on) 
-        -> defaults to 8000
-    # NODE_ENV (specifies node env) 
-        -> defaults to 'development'
-    # SESSION_SECRET (secret to encode session) 
-        -> defaults to 's3cr3tP0wah'
-    # {social}_APP_ID / {social}_APP_SECRET (social connections) 
-        -> no default
-    # MONGO_USER / MONGO_PASS (mongohq connectivity) 
-        -> no default, only used in production
+#todo Push environment variable creation in a pre-deploy config file.
 */
 
 'use strict';
 
 var _ = require('lodash')
   , util = require('util')
+  , path = require('path')
   , os = require('os');
+
+// Config set by user in setup/config.js
+var settings = require('../setup/config.js');
 
 // make sure we cast this to boolean
 var useCompiledAssets = process.env.USE_COMPILED_ASSETS === 'true';
@@ -33,12 +26,15 @@ var addPassportCallbacks = function(config) {
     });
 };
 
+// root dir
+var root = path.normalize(__dirname + '/..');
+
 // common settings between development and production
 var common = {
-    env: process.env.NODE_ENV,
+    env: process.env.NODE_ENV || 'development',
     port: process.env.PORT || 8000,
-    sessionSecret: process.env.SESSION_SECRET || 's3cr3tP0wah',
-    root: require('path').normalize(__dirname + '/..'),
+    sessionSecret: settings.sessionSecret || 's3cr3tP0wah',
+    root: root,
     useCompiledAssets: useCompiledAssets,
     hostname: os.hostname(),
     pbkdf2: {
@@ -50,34 +46,58 @@ var common = {
     },
     passport: {
         facebook: {
-            clientID: process.env.FACEBOOK_APP_ID,
-            clientSecret: process.env.FACEBOOK_APP_ID
+            clientID: settings.social.facebook.appId,
+            clientSecret: settings.social.facebook.appSecret
         },
         twitter: {
-            clientID: process.env.TWITTER_APP_ID,
-            clientSecret: process.env.TWITTER_APP_SECRET
+            clientID: settings.social.twitter.appId,
+            clientSecret: settings.social.twitter.appSecret
         },
         github: {
-            clientID: process.env.GITHUB_APP_ID,
-            clientSecret: process.env.GITHUB_APP_SECRET
+            clientID: settings.social.github.appId,
+            clientSecret: settings.social.github.appSecret
         }
+    },
+    cdn: {
+        /* Refer to options here: https://github.com/niftylettuce/express-cdn */
+        publicDir : path.join(root, 'assets'),
+        viewsDir: path.join(root, 'app/views'),
+        domain: settings.cdn.domain,
+        bucket: settings.cdn.bucket,
+        endpoint: settings.cdn.endpoint,        
+        key: settings.aws.key,
+        secret: settings.aws.secret,
+        hostname: os.hostname(),
+        port: 1337,
+        ssl: false,
+        production: false
     }
 };
 
 // development settings
 var development = _.extend({}, common, {
-    dbUri: 'mongodb://localhost/mango',
+    dbUri: 'mongodb://localhost/'+settings.db.name,
     showStackError: true,
     logLevel: 'debug',
-    serverAddr: util.format('localhost:%s', common.port)
+    serverAddr: util.format('localhost:%s', common.port),
+});
+// Configure development cdn
+development.cdn = _.extend({}, development.cdn, {
+    ssl: false,
+    production: false  
 });
 
 // production settings
 var production = _.extend({}, common, {
-    dbUri: 'mongodb://'+process.env.MONGO_USER+':'+process.env.MONGO_PASS+'@dharma.mongohq.com:10069/mango',
+    dbUri: settings.db.mongoHqUri,
     showStackError: false,
     logLevel: 'error',
-    serverAddr: 'mango.co'
+    serverAddr: settings.app.domain,
+});
+// Configure production cdn
+production.cdn = _.extend({}, production.cdn, {
+    ssl: false,
+    production: true
 });
 
 // populare *current* environment based on the environment variable,
