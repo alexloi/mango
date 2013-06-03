@@ -1,3 +1,7 @@
+#setup
+setup/config.js
+/setup/config.js
+
 #nodejs
 node_modules
 /node_modules
