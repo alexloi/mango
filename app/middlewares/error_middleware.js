@@ -16,7 +16,6 @@ module.exports.genericError = function(config) {
         // #todo: extend this logic to cover for various types of errors
         // and messages i,e stacktraces. this is currently broken hence
         // logging to the console.
-        console.log(err);
         logger.error(err);
         // #todo: make a proper 500
         res.status(500).render('errors/500');
