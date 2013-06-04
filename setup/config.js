@@ -21,8 +21,8 @@ var config = {
     },
     social: {
         facebook: {
-            appId: '',
-            appSecret: '',
+            appId: '163922760454149',
+            appSecret: 'f38003fd42c83c72c0f7d58d6308add9',
         },
         twitter: {
             appId: '',
@@ -38,7 +38,7 @@ var config = {
         secret: 'adUOBdxfubRzFPj4J9TBy3M4BMnLFU9IMOjnn6b/'
     },
     cdn: {
-        domain: 'd1z2symhnh09s0.cloudfront.net',
+        domain: 'cdn.streethub.com',
         bucket: 'streethub-assets'
     }
 };
