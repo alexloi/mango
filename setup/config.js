@@ -34,8 +34,8 @@ var config = {
         }   
     },
     aws: {
-        key: 'AKIAI66ZUDSAJ2LLVNZA',
-        secret: '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'
+        key: 'AKIAJ2CIJSY53IIYQ7QQ',
+        secret: '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'
     },
     cdn: {
         domain: 'd1z2symhnh09s0.cloudfront.net',
