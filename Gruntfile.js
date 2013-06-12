@@ -79,8 +79,6 @@ module.exports = function(grunt) {
             console.warn('Mocha grunt task: Could not find key in require cache:\n' + key);
             }
         }
-
-     
         require('child_process')
             .exec(this.data.cmd, function(err, stdout){
                 grunt.log.write(stdout);

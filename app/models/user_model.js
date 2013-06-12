@@ -8,7 +8,7 @@ var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , crypto = require('crypto')
   , auth = require('../../lib/auth')
-  , authTypes = ['github', 'twitter', 'facebook']
+  , authTypes = ['facebook']
   , plugins = require('../../lib/model_plugins');
 
 /**
@@ -60,11 +60,10 @@ var UserSchema = new Schema({
         type: String,
         required: true
     },
-    facebook: {},
-    twitter: {},
-    github: {}
+    accounts: []
 });
 
+/* Creates a virtual attribute for the model */
 UserSchema.virtual('full_name')
     .get(function() {
         return this.first_name + ' ' + this.last_name;
