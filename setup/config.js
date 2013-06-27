@@ -38,8 +38,9 @@ var config = {
         secret: 'adUOBdxfubRzFPj4J9TBy3M4BMnLFU9IMOjnn6b/'
     },
     cdn: {
-        domain: 'd1z2symhnh09s0.cloudfront.net',
-        bucket: 'streethub-assets'
+        domain: 'cdn.streethub.com',
+        bucket: 'streethub-assets',
+        endpoint: 's3.streethub-assets.amazonaws.com'
     }
 };
 
