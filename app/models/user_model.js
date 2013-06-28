@@ -32,14 +32,14 @@ var UserSchema = new Schema({
         type: String,
         required: true
     },
-    last_name: {
+    family_name: {
         type: String,
         required: true
     },
     email: {
         type: String,
-        required: true,
         lowercase: true,
+        unique: true,
         trim: true,
         validate: [isEmail, 'invalid email address'],
         index: {
@@ -50,23 +50,27 @@ var UserSchema = new Schema({
     username: {
         type: String,
         lowercase: true,
-        required: true,
         trim: true,
         index: {
             unique: true
         }
     },
     password: {
+        type: String
+    },
+    face_uid: {
         type: String,
-        required: true
+        index: {
+            unique: true
+        }
     },
     accounts: []
 });
 
 /* Creates a virtual attribute for the model */
-UserSchema.virtual('full_name')
+UserSchema.virtual('fullName')
     .get(function() {
-        return this.first_name + ' ' + this.last_name;
+        return this.firstName + ' ' + this.lastName;
     });
 
 UserSchema.plugin(plugins.addUpdatedField);

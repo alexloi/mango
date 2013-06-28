@@ -11,7 +11,8 @@ var express = require('express')
   , apiMiddleware = require('../app/middlewares/api_middleware')
   , authMiddleware = require('../app/middlewares/auth_middleware')
   , passport = require('passport')
-  , validator = require('express-validator');
+  , validator = require('express-validator')
+  , flash = require('connect-flash');
 
 module.exports = function(app, config) {
     app.use(express.static(config.root + '/assets'));
@@ -55,11 +56,15 @@ module.exports = function(app, config) {
         // Validators
         app.use(validator);
 
+        // Use flash messages
+        app.use(flash());
+
         // Router
         app.use(app.router);
 
         //Bind error handling 
         app.use(errorMiddleware.genericError(config));
         app.use(errorMiddleware.notFound(config));
+        
     });
 };

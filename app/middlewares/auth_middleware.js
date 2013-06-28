@@ -17,3 +17,16 @@ module.exports.loginRequired = function(config) {
     };
 };
 
+/**
+ * User checks
+ */
+ exports.user = {
+    isLoggedIn: function(req, res, next) {
+        if(req.isAuthenticated()) return res.redirect('/profile');
+        next();
+    }
+ };
+ 
+
+
+
