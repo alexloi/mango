@@ -11,7 +11,9 @@
 var _ = require('lodash')
   , util = require('util')
   , path = require('path')
-  , os = require('os');
+  , os = require('os')
+  , winston = require('winston')
+  , appLogger = winston.loggers.get('app');
 
 // Config set by user in setup/config.js
 var settings = require('../setup/config.js');
@@ -31,7 +33,7 @@ var root = path.normalize(__dirname + '/..');
 
 // common settings between development and production
 var common = {
-    env: process.env.NODE_ENV || 'development',
+    env: process.env.NODE_ENV || 'production',
     port: process.env.PORT || 8000,
     sessionSecret: settings.sessionSecret || 's3cr3tP0wah',
     root: root,
@@ -70,7 +72,8 @@ var common = {
         hostname: os.hostname(),
         port: 1337,
         ssl: false,
-        production: false
+        production: false,
+        logger: appLogger
     }
 };
 

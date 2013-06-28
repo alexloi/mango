@@ -37,7 +37,7 @@ module.exports = function(app, config) {
 
         // Connect errorMiddleware for error handling
         app.use(errorMiddleware.errorDomain(config));
-        
+
         // Setup CDN
         var CDN = require('express-cdn')(app, config.cdn);
 
