@@ -11,5 +11,7 @@ var mongoose = require('mongoose')
   , _ = require('lodash');
 
 
-
+exports.profile = function (req, res) {
+    return res.send('Use profile: ', req.user.username);
+};
 

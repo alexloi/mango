@@ -33,8 +33,8 @@ var root = path.normalize(__dirname + '/..');
 
 // common settings between development and production
 var common = {
-    env: process.env.NODE_ENV || 'production',
-    port: process.env.PORT || 8000,
+    env: process.env.NODE_ENV || 'development',
+    port: process.env.PORT || 3000,
     sessionSecret: settings.sessionSecret || 's3cr3tP0wah',
     root: root,
     useCompiledAssets: useCompiledAssets,
