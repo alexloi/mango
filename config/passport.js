@@ -80,6 +80,7 @@ module.exports = function(app, config) {
                                     , family_name: profile.name.familyName
                                     , email: profile.emails[0].value || 'jon@doe.com'
                                     , face_uid: profile.id
+                                    , role: 'user'
                                     , accounts: [] }
                           , account = {provider:'facebook', _profile: profile};
 

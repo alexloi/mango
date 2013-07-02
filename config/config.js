@@ -60,6 +60,8 @@ var common = {
             clientSecret: settings.social.github.appSecret
         }
     },
+    // Third party service integration
+    services: settings.services,
     cdn: {
         /* Refer to options here: https://github.com/niftylettuce/express-cdn */
         publicDir : path.join(root, 'assets'),

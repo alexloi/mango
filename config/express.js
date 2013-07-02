@@ -11,6 +11,7 @@ var express = require('express')
   , apiMiddleware = require('../app/middlewares/api_middleware')
   , authMiddleware = require('../app/middlewares/auth_middleware')
   , passport = require('passport')
+  , userAuth = require('connect-roles')
   , validator = require('express-validator')
   , flash = require('connect-flash');
 
@@ -36,22 +37,25 @@ module.exports = function(app, config) {
             })
         }));
 
-        // Connect errorMiddleware for error handling
-        app.use(errorMiddleware.errorDomain(config));
-
         // Setup CDN
         var CDN = require('express-cdn')(app, config.cdn);
 
         // Setup locals for views
         app.use(viewMiddleware.locals(config, CDN));
 
-        // Setup passport for auth
+        // Setup passport for authentication
         app.use(passport.initialize());
         app.use(passport.session());
 
+        // Setup connect-roles for authorization
+        // NOTE: Authorization strategy is defined in authMiddleware and is 
+        // bootstrapped on require.
+        app.use(userAuth);
+
+
         // Mount api-specific middleware on /api
-        app.use('/api', authMiddleware.loginRequired(config));
-        app.use('/api', apiMiddleware(config));
+        // app.use('/api', authMiddleware.user.loginRequired);
+        // app.use('/api', apiMiddleware(config));
 
         // Validators
         app.use(validator);

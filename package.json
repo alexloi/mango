@@ -40,7 +40,9 @@
     "superagent": "https://registry.npmjs.org/superagent/-/superagent-0.12.4.tgz",
     "lodash": "~1.2.1",
     "express-cdn": "~0.1.0",
-    "connect-ensure-login": "~0.1.1"
+    "connect-ensure-login": "~0.1.1",
+    "sendgrid": "~0.2.7",
+    "connect-roles": "~2.1.0"
   },
   "devDependencies": {
     "grunt-bower-concat": "~0.1.0",

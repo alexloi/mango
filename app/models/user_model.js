@@ -58,6 +58,11 @@ var UserSchema = new Schema({
     password: {
         type: String
     },
+    role: { 
+        type:String, 
+        required: true, 
+        enum:['user','admin']
+    },
     face_uid: {
         type: String,
         index: {

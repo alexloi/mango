@@ -1,32 +1,32 @@
-/*=======================================
-=            AUTH MIDDLEWARE            =
-=======================================*/
+/*================================================
+=            AUTHORIZATION MIDDLEWARE            =
+==================================================*/
 
 'use strict';
 
-/**
- * Requires the user to be logged in to access the route. If the user is not,
- * it redirects to /login.
- */
-module.exports.loginRequired = function(config) {
-    return function(req, res, next) {
-        var loginUrl = '/login'
-          , redirect = req.url != null? '?next=' + req.url : '';
-        if (!req.isAuthenticated()) return res.redirect(loginUrl + redirect);
-        next();
-    };
-};
+var user = require('connect-roles');
 
-/**
- * User checks
- */
- exports.user = {
-    isLoggedIn: function(req, res, next) {
-        if(req.isAuthenticated()) return res.redirect('/profile');
-        next();
+// Permitted route
+user.use('login', function(req){
+    if(!req.user.isAuthenticated){
+        return true;
     }
- };
- 
+});
 
+user.use('signup', function(req){
+    if(!req.user.isAuthenticated){
+        return true;
+    }
+});
 
+user.use('profile', function(req){
+    if(req.user.role == 'user' || req.user.role === 'admin'){
+        return true;
+    }
+});
 
+user.setFailureHandler(function(req, res, action){
+    action === 'profile' ? res.redirect('/login') : false;
+    action === 'login' ?  res.redirect('/profile') : false;
+    action === 'signup' ? res.redirect('/profile') : false;
+});

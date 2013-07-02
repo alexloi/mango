@@ -6,8 +6,7 @@
 
 var passport = require('passport')
   , accounts = require('../controllers/accounts_controller')
-  , authMiddleware = require('../middlewares/auth_middleware')
-  , ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
+  , user = require('connect-roles');
 
 module.exports = function(app, config) {
     // AUTH
@@ -15,13 +14,15 @@ module.exports = function(app, config) {
     app.get('/auth/facebook/callback', passport.authenticate('facebook', { successReturnToOrRedirect: '/profile', failureRedirect: '/login' }));
 
     // ACCOUNTS
-    app.get('/login', authMiddleware.user.isLoggedIn, accounts.showLogin);
+    app.get('/login', user.can('login'), accounts.renderLogin);
     app.post('/login', accounts.login);
+    
+    app.get('/signup',  user.can('signup'), accounts.signup);
+    app.post('/signup', accounts.createUserAccount);
 
-    app.get('/signup',  authMiddleware.user.isLoggedIn, accounts.signup);
-    app.post('/signup', accounts.createAccount);
+    app.get('/profile', user.can('profile'), accounts.renderProfile);
+    app.get('/verify', accounts.renderVerify);
 
-    app.get('/profile', ensureLoggedIn('/login'), accounts.profile);
-    app.get('/verify', ensureLoggedIn('/login'), accounts.verify);
-    app.get('/logout', ensureLoggedIn('/'), accounts.logout);
+    app.get('/logout', accounts.logout);
+    
 };

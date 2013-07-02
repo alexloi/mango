@@ -8,31 +8,29 @@ var mongoose = require('mongoose')
   , passport = require('passport')
   , User = mongoose.model('User')
   , util = require('util')
-  , _ = require('lodash');
+  , _ = require('lodash')
+  , emailService = require('../../services/sendgrid');
 
 
-exports.profile = function (req, res) {
-    return res.send('User profile: ', req.user);
-};
-
-exports.verify = function (req, res) {
-    return res.send('Verify email: ' + req.user.email + '<a href="/profile"> Next </a>');
-};
-
-exports.showLogin = function (req, res) {
+module.exports.renderLogin = function (req, res) {
     return res.render('accounts/login', { message: req.flash('error') });
 };
 
-exports.login = function (req, res, next) {
+module.exports.renderProfile = function (req, res) {
+    return res.send('User profile: ', req.user);
+};
+
+module.exports.renderVerify = function (req, res) {
+    return res.send('Verify email: ' + req.user.email + '<a href="/profile"> Next </a>');
+};
+
+module.exports.login = function (req, res, next) {
     passport.authenticate('local', function(err, user, info){
-
         if(err) return next(err);
-
         if(!user){
             req.flash('error', 'Invalid email or password');
             return res.redirect('/login');
         };
-
         req.login(user, function(err){
             if(err) next(err);
             return res.redirect('/profile');
@@ -41,11 +39,11 @@ exports.login = function (req, res, next) {
     })(req, res, next);
 };
 
-exports.signup = function (req, res) {
+module.exports.signup = function (req, res) {
     return res.render('accounts/signup', { message: req.flash('error') });
 };
 
-exports.createAccount = function (req, res) {
+module.exports.createUserAccount = function (req, res) {
     // Validate account details
     req.check('first_name', 'empty first name').notEmpty();
     req.check('family_name', 'empty last name').notEmpty();
@@ -64,6 +62,8 @@ exports.createAccount = function (req, res) {
 
     // Lowercase email
     req.body.email = req.body.email.toLowerCase();
+    // User role
+    req.body.role = 'user';
 
     // Check if user exists
     User.count({email: req.body.email}, function(err, count){
@@ -95,7 +95,7 @@ exports.createAccount = function (req, res) {
 
 };
 
-exports.logout = function (req, res) {
+module.exports.logout = function (req, res) {
     req.logout();
     return res.redirect('/');
 };
