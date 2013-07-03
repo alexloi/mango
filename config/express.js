@@ -9,7 +9,7 @@ var express = require('express')
   , viewMiddleware = require('../app/middlewares/view_middleware')
   , errorMiddleware = require('../app/middlewares/error_middleware')
   , apiMiddleware = require('../app/middlewares/api_middleware')
-  , authMiddleware = require('../app/middlewares/auth_middleware')
+  , rolesMiddleware = require('../app/middlewares/roles_middleware')
   , passport = require('passport')
   , userAuth = require('connect-roles')
   , validator = require('express-validator')
@@ -52,7 +52,6 @@ module.exports = function(app, config) {
         // bootstrapped on require.
         app.use(userAuth);
 
-
         // Mount api-specific middleware on /api
         // app.use('/api', authMiddleware.user.loginRequired);
         // app.use('/api', apiMiddleware(config));
@@ -62,6 +61,9 @@ module.exports = function(app, config) {
 
         // Use flash messages
         app.use(flash());
+
+        // Add csrf
+        app.use(express.csrf());
 
         // Router
         app.use(app.router);

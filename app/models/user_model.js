@@ -58,10 +58,19 @@ var UserSchema = new Schema({
     password: {
         type: String
     },
+    // Forgot password
+    password_token: {
+        type: String,
+        unique: true,
+        index: {
+            name: 1,
+            type: -1
+        }
+    },
     role: { 
-        type:String, 
+        type: String, 
         required: true, 
-        enum:['user','admin']
+        enum: ['user','admin']
     },
     face_uid: {
         type: String,
@@ -92,6 +101,18 @@ UserSchema.methods.hashPassword = function(done) {
         if (err) return done(err);
         if (password == null) return done(new Error('cannot create pbkdf2 password'));
         self.password = password;
+        done(null);
+    });
+};
+
+UserSchema.methods.generatePasswordToken = function(done) {
+    var self = this;
+    console.log('generating password token');
+    auth.forgot.email(function(err, token){
+        console.log('token generated', token);
+        if (err) return done(err);
+        self.password_token = token;
+
         done(null);
     });
 };

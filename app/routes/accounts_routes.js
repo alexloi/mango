@@ -20,9 +20,14 @@ module.exports = function(app, config) {
     app.get('/signup',  user.can('signup'), accounts.signup);
     app.post('/signup', accounts.createUserAccount);
 
+    app.get('/forgot', user.can('forgot'), accounts.renderForgot);
+    app.post('/forgot', accounts.forgot);
+
+    app.get('/reset/:token', accounts.renderReset);
+    app.post('/reset', user.can('reset'), accounts.resetPassword);
+
     app.get('/profile', user.can('profile'), accounts.renderProfile);
     app.get('/verify', accounts.renderVerify);
 
-    app.get('/logout', accounts.logout);
-    
+    app.get('/logout', accounts.logout); 
 };
