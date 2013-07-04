@@ -1,12 +1,14 @@
 /*====================================
 =            MAIN SERVER             =
 ====================================*/
-
+/**
+*  Load config / bootstrap 
+**/
 var util = require('util')
   , winston = require('winston')
   , express = require('express')
-  , bootstrap = require('./config/bootstrap')
-  , config = require('./config/config');
+  , config = require('./config/config')
+  , bootstrap = require('./config/bootstrap');
 
 global.app = express();
 bootstrap(app, config);

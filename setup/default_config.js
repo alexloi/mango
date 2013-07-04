@@ -40,6 +40,12 @@ var config = {
         domain: '',
         bucket: '',
         endpoint: ''
+    },
+    services: {
+        sendgrid:{
+            user: '',
+            pass: ''
+        }
     }
 };
 
