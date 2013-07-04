@@ -1,0 +1,26 @@
+extends ../layouts/default
+
+block body
+    h1 Signup
+
+    - if(message)
+        h2 
+        =message
+    
+    form(method='post', action='/signup')
+        label Name
+        input(type='text', name='first_name')
+
+        label Surname
+        input(type='text', name='family_name')
+        
+        label Email
+        input(type='text', name='email')
+        
+        label Password
+        input(type='password', name='password')
+
+        label Repeat password
+        input(type='password', name='validate_password')
+        
+        input(type='submit', name='submit', value='Signup') 
