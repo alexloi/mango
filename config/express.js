@@ -9,9 +9,11 @@ var express = require('express')
   , viewMiddleware = require('../app/middlewares/view_middleware')
   , errorMiddleware = require('../app/middlewares/error_middleware')
   , apiMiddleware = require('../app/middlewares/api_middleware')
-  , authMiddleware = require('../app/middlewares/auth_middleware')
+  , rolesMiddleware = require('../app/middlewares/roles_middleware')
   , passport = require('passport')
-  , validator = require('express-validator');
+  , userAuth = require('connect-roles')
+  , validator = require('express-validator')
+  , flash = require('connect-flash');
 
 module.exports = function(app, config) {
     app.use(express.static(config.root + '/assets'));
@@ -35,25 +37,33 @@ module.exports = function(app, config) {
             })
         }));
 
-        // Connect errorMiddleware for error handling
-        app.use(errorMiddleware.errorDomain(config));
-
         // Setup CDN
         var CDN = require('express-cdn')(app, config.cdn);
 
         // Setup locals for views
         app.use(viewMiddleware.locals(config, CDN));
 
-        // Setup passport for auth
+        // Setup passport for authentication
         app.use(passport.initialize());
         app.use(passport.session());
 
+        // Setup connect-roles for authorization
+        // NOTE: Authorization strategy is defined in authMiddleware and is 
+        // bootstrapped on require.
+        app.use(userAuth);
+
         // Mount api-specific middleware on /api
-        app.use('/api', authMiddleware.loginRequired(config));
-        app.use('/api', apiMiddleware(config));
+        // app.use('/api', authMiddleware.user.loginRequired);
+        // app.use('/api', apiMiddleware(config));
 
         // Validators
         app.use(validator);
+
+        // Use flash messages
+        app.use(flash());
+
+        // Add csrf
+        app.use(express.csrf());
 
         // Router
         app.use(app.router);
@@ -61,5 +71,6 @@ module.exports = function(app, config) {
         //Bind error handling 
         app.use(errorMiddleware.genericError(config));
         app.use(errorMiddleware.notFound(config));
+        
     });
 };

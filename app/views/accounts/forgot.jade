@@ -1,0 +1,15 @@
+extends ../layouts/default
+
+block body
+    h1 Forgot password
+    p Add your password you'll get an email with an auth code
+    - if(message)
+        h2 
+        =message
+
+    form(method='post', action='/forgot')
+        label Email
+        input(type='text', name='email')
+        
+        input(type='hidden', name='_csrf', value='#{_csrf}')
+        input(type='submit', name='submit', value='Send') 

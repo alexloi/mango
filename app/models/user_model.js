@@ -32,14 +32,14 @@ var UserSchema = new Schema({
         type: String,
         required: true
     },
-    last_name: {
+    family_name: {
         type: String,
         required: true
     },
     email: {
         type: String,
-        required: true,
         lowercase: true,
+        unique: true,
         trim: true,
         validate: [isEmail, 'invalid email address'],
         index: {
@@ -50,23 +50,41 @@ var UserSchema = new Schema({
     username: {
         type: String,
         lowercase: true,
-        required: true,
         trim: true,
         index: {
             unique: true
         }
     },
     password: {
+        type: String
+    },
+    // Forgot password
+    password_token: {
         type: String,
-        required: true
+        unique: true,
+        index: {
+            name: 1,
+            type: -1
+        }
+    },
+    role: { 
+        type: String, 
+        required: true, 
+        enum: ['user','admin']
+    },
+    face_uid: {
+        type: String,
+        index: {
+            unique: true
+        }
     },
     accounts: []
 });
 
 /* Creates a virtual attribute for the model */
-UserSchema.virtual('full_name')
+UserSchema.virtual('fullName')
     .get(function() {
-        return this.first_name + ' ' + this.last_name;
+        return this.firstName + ' ' + this.lastName;
     });
 
 UserSchema.plugin(plugins.addUpdatedField);
@@ -83,6 +101,18 @@ UserSchema.methods.hashPassword = function(done) {
         if (err) return done(err);
         if (password == null) return done(new Error('cannot create pbkdf2 password'));
         self.password = password;
+        done(null);
+    });
+};
+
+UserSchema.methods.generatePasswordToken = function(done) {
+    var self = this;
+    console.log('generating password token');
+    auth.forgot.email(function(err, token){
+        console.log('token generated', token);
+        if (err) return done(err);
+        self.password_token = token;
+
         done(null);
     });
 };

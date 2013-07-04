@@ -4,6 +4,6 @@
 
 'use strict';
 
-exports.index = function(req, res) {
-    res.render('landing/index');
+module.exports.index = function(req, res) {
+    return res.send('Index page');
 };
