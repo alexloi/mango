@@ -10,11 +10,11 @@ var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , util = require('util')
   , _ = require('lodash')
+  , message = { error: '', success: '', info: ''}
   , emailService = require('../../services/sendgrid');
 
-
 module.exports.renderLogin = function (req, res) {
-    return res.render('accounts/login', {message: req.flash('error')});
+    return res.render('accounts/login');
 };
 
 module.exports.renderProfile = function (req, res) {
@@ -26,36 +26,42 @@ module.exports.renderVerify = function (req, res) {
 };
 
 module.exports.renderForgot = function (req , res) {
-    return res.render('accounts/forgot', {message: req.flash('error')});
+    return res.render('accounts/forgot');
 };
 
 module.exports.renderReset = function (req, res, next) {
-    // Find the token
-    console.log('render reset');
+    // Find the password_token
     User.findOne({password_token: req.params['token']}, function(err, user){
+        // Error middleware
         if(err) next(err);
 
+        // No user found - token doesnt exist
         if(!user){
             req.flash('error', 'Token expired or user doesnt exist');
             return res.render('accounts/reset');    
         };
 
+        // Log the mofo in 
         req.login(user, function(err, user){
             if(err) return next(err);
-            return res.render('accounts/reset', {message: req.flash('error') });    
+            return res.render('accounts/reset');    
         });
     });
 };
 
 module.exports.login = function (req, res, next) {
+    // Local authentication
     passport.authenticate('local', function(err, user, info){
+        // Error middleware
         if(err) return next(err);
         
+        // No such user - return invalid email
         if(!user){
             req.flash('error', 'Invalid email or password');
             return res.redirect('/login');
         };
         
+        // Log the player in
         req.login(user, function(err){
             if(err) next(err);
             return res.redirect('/profile');
@@ -65,22 +71,24 @@ module.exports.login = function (req, res, next) {
 };
 
 module.exports.signup = function (req, res) {
-    return res.render('accounts/signup', {message: req.flash('error')});
+    return res.render('accounts/signup');
 };
 
 module.exports.forgot = function (req, res, next) {
     // Validator
     req.check('email', 'invalid email').notEmpty().isEmail();
 
+    // Checks req.body for above stated validations
     var errors = req.validationErrors();
 
+    // Any errors
     if (errors) {
         // Create a flash error
         req.flash('error', errors[0].msg);
         return res.redirect('/forgot');
     };
 
-    // Lowercase email
+    // Lowercase email #cleanup
     req.body.email = req.body.email.toLowerCase();
 
     // Check if user exists
@@ -101,13 +109,15 @@ module.exports.forgot = function (req, res, next) {
                 user.save(function(err, user){
                     if(err) return next(err);
 
+                    // Create the verification link
                     var verificationLink = 'http://' + config.serverAddr + '/reset/'+ user.password_token;
 
+                    // Send off ze email
                     emailService.send({ from: 'info@streethub.com', 
                                         to: user.email, 
                                         subject: 'forgot password', 
                                         html: '<a href="'+verificationLink+'">Reset here</a>'}, function(success, message){
-                                            req.flash('error', message || 'Check your inbox');
+                                            req.flash('info', message || 'Check your inbox');
                                             return res.redirect('/forgot');
                                         });
                 });
@@ -115,6 +125,7 @@ module.exports.forgot = function (req, res, next) {
         });
     };  
 
+    // User doesn't exist
     var userUnknown = function() {
         req.flash('error', 'Email doesnt exist! Register a new account');
         return res.redirect('/forgot');
@@ -130,17 +141,19 @@ module.exports.createUserAccount = function (req, res, next) {
     req.check('password', '6 to 20 characters required').len(6, 20);
     req.check('password', 'should match').equals(req.body.validate_password);
 
+    // Check for validation errors
     var errors = req.validationErrors();
     
     if (errors) {
         // Create a flash error
         req.flash('error', errors[0].msg);
+        // And return
         return res.redirect('/signup');
     }; 
 
-    // Lowercase email
+    // Lowercase email #cleanup
     req.body.email = req.body.email.toLowerCase();
-    // User role
+    // User role #cleanup
     req.body.role = 'user';
 
     // Check if user exists
@@ -158,11 +171,16 @@ module.exports.createUserAccount = function (req, res, next) {
     // Else sign this player up!
     var makeUser = function() {
         var user = new User(req.body);
+
+        // Hash ze password based on @alexmic voodoo
         user.hashPassword( function(err) {
             if(err) return next(err);
 
+            // Save this mofo
             user.save(function(err,user){
                 if(err) return next(err);
+
+                // And log him in
                 req.logIn(user, function(err){
                     if(err) return next(err);
                     return res.redirect('/profile');
@@ -191,12 +209,14 @@ module.exports.resetPassword = function (req, res) {
     // Set new password
     user.password = req.body.password;
 
+    // Hash the new password
     user.hashPassword( function(err) {
         if(err) return next(err);
         
         // Remove the password_token (used for forget password)
         user.password_token = '';
 
+        // Store the user and go back to profile
         user.save(function(err, user){
             req.login(user, function(err){
                 if(err) return next(err);
@@ -208,6 +228,9 @@ module.exports.resetPassword = function (req, res) {
 };
 
 module.exports.logout = function (req, res) {
+    // Logout the request
     req.logout();
+
+    // Return to main page
     return res.redirect('/');
 };

@@ -40,20 +40,18 @@ var UserSchema = new Schema({
         type: String,
         lowercase: true,
         unique: true,
+        sparse:true,
         trim: true,
         validate: [isEmail, 'invalid email address'],
         index: {
             name: 1,
-            type: -1
+            type: -1,
         }
     },
     username: {
         type: String,
         lowercase: true,
         trim: true,
-        index: {
-            unique: true
-        }
     },
     password: {
         type: String
@@ -62,6 +60,7 @@ var UserSchema = new Schema({
     password_token: {
         type: String,
         unique: true,
+        sparse: true,
         index: {
             name: 1,
             type: -1
@@ -75,8 +74,10 @@ var UserSchema = new Schema({
     face_uid: {
         type: String,
         index: {
-            unique: true
-        }
+            unique: true,
+            sparse: true,
+        },
+        default: null
     },
     accounts: []
 });
@@ -107,9 +108,7 @@ UserSchema.methods.hashPassword = function(done) {
 
 UserSchema.methods.generatePasswordToken = function(done) {
     var self = this;
-    console.log('generating password token');
     auth.forgot.email(function(err, token){
-        console.log('token generated', token);
         if (err) return done(err);
         self.password_token = token;
 

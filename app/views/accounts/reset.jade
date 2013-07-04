@@ -4,11 +4,9 @@ block body
     h1 Reset your password
     h2 
         =user.email
+    
+    include ../includes/flash/message
 
-    - if(message)
-        h2 
-        =message
-        
     form(method='post', action='/reset')
         label Password
         input(type='password', name='password')

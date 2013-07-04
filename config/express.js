@@ -40,6 +40,9 @@ module.exports = function(app, config) {
         // Setup CDN
         var CDN = require('express-cdn')(app, config.cdn);
 
+        // Use flash messages
+        app.use(flash());
+        
         // Setup locals for views
         app.use(viewMiddleware.locals(config, CDN));
 
@@ -58,9 +61,6 @@ module.exports = function(app, config) {
 
         // Validators
         app.use(validator);
-
-        // Use flash messages
-        app.use(flash());
 
         // Add csrf
         app.use(express.csrf());
