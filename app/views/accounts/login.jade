@@ -2,13 +2,13 @@ extends ../layouts/default
 
 block body
     h1 Native login
-    - if(message)
-        h2 
-        =message
+
+    include ../includes/flash/message
 
     form(method='post', action='/login')
         label Email
         input(type='text', name='email')
+        
         label Password
         input(type='password', name='password')
 

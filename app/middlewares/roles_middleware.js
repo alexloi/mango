@@ -6,7 +6,6 @@
 
 var user = require('connect-roles');
 
-// Permitted route
 user.use('login', function(req){
     if(!req.user.isAuthenticated){
         return true;
