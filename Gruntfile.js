@@ -1,12 +1,29 @@
 module.exports = function(grunt) {
     grunt.initConfig({
+        jshint: {
+            everything: {
+                src:['Gruntfile.js', 'assets/javascripts/*.js', 'assets.javascripts/*/*.js'],
+                options: {
+                    'undef': true,
+                    'unused': true,
+                    globals: {
+                        jQuery: true,
+                        console: true,
+                        require: true,
+                        module: true
+                    }
+                }
+            }
+        },
         uglify:{
+            /* Sample minifying / concat task */
             mini:{
                 src:['assets/javascripts/*.js'],
                 dest: 'assets/build/app.min.js'
             },
-            /* Add bower js files to minify / concat 
-               Remember: Position is important.
+            /* 
+                Add bower js files to minify / concat 
+                Remember: Position is important.
             */
             bower: {
                 src: ['assets/components/jquery/jquery.js',
@@ -16,6 +33,7 @@ module.exports = function(grunt) {
             }
         },
         cssmin: {
+            /* Sample css minification task */
             mini: {
                 files: {
                     'assets/build/app.min.css':
@@ -24,26 +42,24 @@ module.exports = function(grunt) {
             }
         },
         test: {
+            /* Sample testing task */
             client: {
                 cmd: ''
             },
             server: {
-                cmd: './node_modules/.bin/mocha'
-                   + ' --globals app'
-                   + ' --reporter spec'
-                   + ' --timeout 20000'
-                   + ' --ui bdd'
-                   + ' --recursive'
+                cmd: './node_modules/.bin/mocha --globals app --reporter spec --timeout 20000 --ui bdd --recursive'
             }
         },
         watch: {
+            /* Sample javascript / linting + minifying watcher */
             javascripts: {
-                files: ['assets/javascripts/*.js'],
-                tasks: ['uglify:mini'],
+                files: ['Gruntfile.js', 'assets/javascripts/*.js'],
+                tasks: ['jshint:everything','uglify:mini'],
                 options: {
                     nospawn: true
                 }
             },
+            /* Sample css watcher */
             stylesheets: {
                 files: ['assets/stylesheets/*.js'],
                 tasks: ['cssmin:mini'],
@@ -56,6 +72,7 @@ module.exports = function(grunt) {
  
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch'); 
 
 

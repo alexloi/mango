@@ -11,6 +11,7 @@ var util = require('util')
 global.app = express();
 bootstrap(app, config);
 
+// Keep the logger global
 logger = winston.loggers.get('config');
 
 /**
