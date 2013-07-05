@@ -27,7 +27,6 @@ module.exports = function(app, config) {
     app.post('/reset', user.can('reset'), accounts.resetPassword);
 
     app.get('/profile', user.can('profile'), accounts.renderProfile);
-    app.get('/verify', accounts.renderVerify);
-
+ 
     app.get('/logout', accounts.logout); 
 };

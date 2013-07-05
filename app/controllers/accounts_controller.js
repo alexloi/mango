@@ -18,11 +18,7 @@ module.exports.renderLogin = function (req, res) {
 };
 
 module.exports.renderProfile = function (req, res) {
-    return res.send('User profile: ', req.user);
-};
-
-module.exports.renderVerify = function (req, res) {
-    return res.send('Verify email: ' + req.user.email + '<a href="/profile"> Next </a>');
+    return res.render('accounts/profile');
 };
 
 module.exports.renderForgot = function (req , res) {
@@ -208,13 +204,11 @@ module.exports.resetPassword = function (req, res) {
     var user = req.user;
     // Set new password
     user.password = req.body.password;
+    user.password_token = null;
 
     // Hash the new password
     user.hashPassword( function(err) {
         if(err) return next(err);
-        
-        // Remove the password_token (used for forget password)
-        user.password_token = '';
 
         // Store the user and go back to profile
         user.save(function(err, user){
