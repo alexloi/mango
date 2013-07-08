@@ -78,7 +78,7 @@ module.exports = function(app, config) {
                         var newUser = new User()
                           , data = {  first_name: profile.name.givenName
                                     , family_name: profile.name.familyName
-                                    , email: profile.emails[0].value || 'jon@doe.com'
+                                    , email: profile.emails[0].value || null
                                     , face_uid: profile.id
                                     , role: 'user'
                                     , accounts: [] }

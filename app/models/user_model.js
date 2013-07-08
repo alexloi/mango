@@ -40,7 +40,7 @@ var UserSchema = new Schema({
         type: String,
         lowercase: true,
         unique: true,
-        sparse:true,
+        sparse: true,
         trim: true,
         validate: [isEmail, 'invalid email address'],
         index: {
